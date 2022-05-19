@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using SystemsLtd.Training.ECommerce.Repository.Interface;
 using SystemsLtd.Training.ECommerce.Model;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Data.SqlClient;
+using Dapper;
 
 namespace SystemsLtd.Training.ECommerce.Repository
 {
@@ -9,6 +12,7 @@ namespace SystemsLtd.Training.ECommerce.Repository
         #region Properties
         private readonly ILogger<ProductRepository> Logger;
         private readonly ECommerceDBContext ECommerceDBContext;
+        private readonly IConfiguration Configuration;
         private static List<Product> Products = new List<Product>()
             {
                 new Product()
@@ -45,31 +49,45 @@ namespace SystemsLtd.Training.ECommerce.Repository
         #endregion
 
         #region Constractor
-        public ProductRepository(ILogger<ProductRepository> logger, ECommerceDBContext eCommerceDBContext)
+        public ProductRepository(ILogger<ProductRepository> logger, ECommerceDBContext eCommerceDBContext, IConfiguration configuration)
         {
             this.Logger = logger;
             this.ECommerceDBContext = eCommerceDBContext;
+            this.Configuration = configuration;
         }
         #endregion
 
         #region Public Methods
         public IEnumerable<Product> GetProducts()
         {
-            return this.ECommerceDBContext.Products.ToList();
+            using (var connection = this.GetConnection())
+            {
+                var res = connection.Query<Product>("Select * From Product");
+
+                return res;
+            }
         }
 
         public Product GetProduct(int id)
         {
-            return this.ECommerceDBContext.Products.FirstOrDefault(x => x.ProductId == id);
+            using (var connection = this.GetConnection())
+            {
+
+                var res = connection.Query<Product>($"Select * From Product Where ProductId = {id}").FirstOrDefault();
+
+                return res;
+            }
+
+            //return this.ECommerceDBContext.Products.FirstOrDefault(x => x.ProductId == id);
         }
 
         public IEnumerable<Product> GetAllProducts(Product product)
         {
             var products = ProductRepository.Products;
 
-            if(product!=null)
+            if (product != null)
             {
-                if(!string.IsNullOrWhiteSpace(product.ProductName))
+                if (!string.IsNullOrWhiteSpace(product.ProductName))
                 {
                     products = products.Where(x => x.ProductName.Contains(product.ProductName, StringComparison.CurrentCultureIgnoreCase)).ToList();
                 }
@@ -88,23 +106,23 @@ namespace SystemsLtd.Training.ECommerce.Repository
         public int AddProduct(Product product)
         {
             var res = this.ECommerceDBContext.Products.Add(product);
-            
+
             var result = this.ECommerceDBContext.SaveChanges();
 
-            return res.Entity.ProductId;   
+            return res.Entity.ProductId;
         }
 
         public bool UpdateProduct(Product product)
         {
-            var existingProduct = this.ECommerceDBContext.Products.FirstOrDefault(x=> x.ProductId == product.ProductId);
+            var existingProduct = this.ECommerceDBContext.Products.FirstOrDefault(x => x.ProductId == product.ProductId);
 
             if (existingProduct != null)
             {
                 existingProduct.ProductName = product.ProductName;
-                existingProduct.ProductDescription = product.ProductDescription;    
-                existingProduct.PurchasePrice = product.PurchasePrice;  
+                existingProduct.ProductDescription = product.ProductDescription;
+                existingProduct.PurchasePrice = product.PurchasePrice;
                 existingProduct.SalesPrice = product.SalesPrice;
-                existingProduct.Active = product.Active;  
+                existingProduct.Active = product.Active;
                 existingProduct.CategoryId = product.CategoryId;
 
                 var result = this.ECommerceDBContext.SaveChanges();
@@ -127,6 +145,16 @@ namespace SystemsLtd.Training.ECommerce.Repository
             return result > 0;
         }
 
+        #endregion
+
+        #region Private Methods
+        private SqlConnection GetConnection()
+        {
+            var connection = new SqlConnection(this.Configuration.GetConnectionString("DefaultConnection"));
+            connection.Open();
+
+            return connection;
+        }
         #endregion
     }
 }
