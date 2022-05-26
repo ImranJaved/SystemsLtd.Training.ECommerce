@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SystemsLtd.Training.ECommerce.API.Middleware;
 using SystemsLtd.Training.ECommerce.Repository;
 using SystemsLtd.Training.ECommerce.Repository.Interface;
 using SystemsLtd.Training.ECommerce.Service;
@@ -17,7 +18,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
+if(builder.Configuration.GetValue<bool>("Repository:IsStatic"))
+{
+    builder.Services.AddScoped<IProductRepository, ProductRepositoryStatic>();
+}
+else
+{
+    builder.Services.AddScoped<IProductRepository, ProductRepository>();
+}
+
 
 var app = builder.Build();
 
@@ -27,6 +36,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<HeaderValueMiddleware>();
 
 app.UseHttpsRedirection();
 

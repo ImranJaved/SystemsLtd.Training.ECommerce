@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SystemsLtd.Training.ECommer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SystemsLtd.Training.ECommerce.Model", "SystemsLtd.Training.ECommerce.Model\SystemsLtd.Training.ECommerce.Model.csproj", "{AC41B855-2B0E-4AE5-AC9C-6691140DC5B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SystemsLtd.Training.ECommerce.APITests", "SystemsLtd.Training.ECommerce.APITests\SystemsLtd.Training.ECommerce.APITests.csproj", "{A850763D-EF9C-44B2-982C-093173C14CBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{AC41B855-2B0E-4AE5-AC9C-6691140DC5B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC41B855-2B0E-4AE5-AC9C-6691140DC5B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC41B855-2B0E-4AE5-AC9C-6691140DC5B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A850763D-EF9C-44B2-982C-093173C14CBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A850763D-EF9C-44B2-982C-093173C14CBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A850763D-EF9C-44B2-982C-093173C14CBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A850763D-EF9C-44B2-982C-093173C14CBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
